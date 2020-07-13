@@ -33,36 +33,36 @@
                 <h3 class="">Crea un cuenta</h3>
             </div>
             <div class="card-body">
-                <form>
+                <form id="form_registro">
                     <div class="input-group form-group">
                         <span class="input-group-text login-color">
                             <img src="icons/person.svg">
                         </span>
-                        <input id="user-regis" type="text" class="form-control" placeholder="username" value="juan">
+                        <input id="user-regis" type="text" class="form-control" placeholder="username" value="">
                     </div>
                     <div class="input-group form-group">
                         <span class="input-group-text login-color">
                             <img src="icons/person.svg">
                         </span>
-                        <input id="correo-regis" type="email" class="form-control" placeholder="correo" value="juan@gmail.com">
+                        <input id="correo-regis" type="email" class="form-control" placeholder="correo" value="">
                     </div>
                     <div class="input-group form-group">
                         <span class="input-group-text login-color">
                             <img src="icons/lock.svg">
                         </span>
-                        <input id="pass-regis" type="password" class="form-control" placeholder="password" value="1234">
+                        <input id="pass-regis" type="password" class="form-control" placeholder="password" value="">
                     </div>
                     <div class="input-group form-group">
                         <span class="input-group-text login-color">
                             <img src="icons/person.svg">
                         </span>
-                        <input id="telefono-regis" type="text" class="form-control" placeholder="telefono" value="0910055640">
+                        <input id="telefono-regis" type="text" class="form-control" placeholder="telefono" value="">
                     </div>
                     <div class="input-group form-group">
                         <span class="input-group-text login-color">
                             <img src="icons/person.svg">
                         </span>
-                        <input id="codepostal-regis" type="text" class="form-control" placeholder="Codigo postal" value="A-4552">
+                        <input id="codepostal-regis" type="text" class="form-control" placeholder="Codigo postal" value="">
                     </div>
                     <div class="d-flex justify-content-center">
                         <!--a id="iniciar" href="./inicio.html" class="btn login_btn login-color" role="button">Iniciar</a-->

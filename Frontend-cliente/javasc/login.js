@@ -96,7 +96,8 @@ $("#iniciar_registro").click(function (e) {
     let telefono = document.getElementById("telefono-regis").value;
     let codepostal = document.getElementById("codepostal-regis").value;
 
-    if (user != "" && correo != "" && pass != "") {
+    if (user != "" && correo != "" && pass != "" && telefono != "" ) {
+        //consultarDatos(user, correo, pass, telefono, codepostal);
         ingresarDatos(user, correo, pass, telefono, codepostal);
     } else {
         mostrar_mensaje(alerta_registro, "Llene los campos", "danger");
@@ -105,9 +106,10 @@ $("#iniciar_registro").click(function (e) {
 
 //metodo POST
 function ingresarDatos(user, correo, pass, telefono, codepostal) {
+    //location.href = "index.php";
     obtenerID_carrito();
     if (idCarrito != "") {
-        var data = { name: user, email: correo, password: pass, phone: telefono, postalCode: codepostal, id_carrito : idCarrito };
+        var data = { name: user, email: correo, password: pass, phone: telefono, postalCode: codepostal, id_carrito: idCarrito };
         var aux = url;
         fetch(aux, {
             method: 'POST', // or 'PUT'
@@ -118,12 +120,29 @@ function ingresarDatos(user, correo, pass, telefono, codepostal) {
         }).then(function (response) {
             return response.json();
         }).then(function (data_res) {
-            console.log("Respuesta: " + data_res);
-            mostrar_mensaje(alerta_registro, " Exito ", "success");
-        }).catch(error => console.error('Error:', error));
+            var vector = [data_res];
+            var nuevo_id;
+            vector.forEach(task => {
+                nuevo_id = task.id;
+            });
+            if (nuevo_id != null) {
+                console.log("Respuesta: " + data_res);
+                limpiar("form_registro");
+                mostrar_mensaje(alerta_registro, " Exito ", "success");
+                location.href = "index.php";
+            } else {
+                mostrar_mensaje(alerta_registro, "No se puede crear", "danger");
+            }
+        }).catch(function (error) {
+            console.log('Error id cliente registro: ' + error);
+            mostrar_mensaje(alerta_registro, "No se puede crear", "danger");
+        });
     }
 }
 
+function limpiar(card) {
+    document.getElementById(card).reset();
+}
 
 var idCarrito = "";
 var ip_user = "";
@@ -145,54 +164,73 @@ function obtenerID_carrito() {
     });
 }
 
-/*
-    fetch(aux, {
-        method: 'POST', // or 'PUT'
-        body: JSON.stringify(data), // data can be `string` or {object}!
-        headers: {
-            'Content-Type': 'application/json'
+var url_clientes = "https://cryptic-beach-67438.herokuapp.com/";
+//metodo GET clientes
+function consultarDatos(user, correo, pass, telefono, codepostal) {
+    let url = url_clientes + "cliente/listar";
+    fetch(url).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        var bien = true;
+        data.forEach(task => {
+            if (task.name == user || task.email == correo) {
+                console.log(task.name + " " + task.email);
+                bien = false;
+            }
+        });
+        if (bien) {
+            //mostrar_mensaje(alerta_registro, "Listo para añadir", "sucess");
+            //ingresarDatos(user, correo, pass, telefono, codepostal);
+            var aux = url_carrito;
+            fetch(aux).then(function (response) {
+                return response.json();
+            }).then(function (data) {
+                var vector = [data];
+                vector.forEach(task => {
+                    idCarrito = task.idCarrito;
+                    //ip_user = task.ip;
+                });
+                console.log("no espera");
+                if (idCarrito != "") {
+                    var data = { name: user, email: correo, password: pass, phone: telefono, postalCode: codepostal, id_carrito: idCarrito };
+                    var aux = url;
+                    fetch(aux, {
+                        method: 'POST', // or 'PUT'
+                        body: JSON.stringify(data), // data can be `string` or {object}!
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then(function (response) {
+                        return response.json();
+                    }).then(function (data_res) {
+                        var vector = [data_res];
+                        var nuevo_id;
+                        vector.forEach(task => {
+                            nuevo_id = task.id;
+                        });
+                        if (nuevo_id != null) {
+                            console.log("Respuesta: " + data_res);
+                            limpiar("form_registro");
+                            mostrar_mensaje(alerta_registro, " Exito ", "success");
+                            location.href = "index.php";
+                        } else {
+                            mostrar_mensaje(alerta_registro, "No se puede crear", "danger");
+                        }
+                    }).catch(function (error) {
+                        console.log('Error id cliente registro: ' + error);
+                        mostrar_mensaje(alerta_registro, "No se puede crear", "danger");
+                    });
+                }
+            }).catch(function (error) {
+                console.log('Error Id carrito: ' + error);
+                mostrar_mensaje(alerta_login, "Usuario no registrado", "danger");
+            });
+
+        } else {
+            mostrar_mensaje(alerta_registro, "Usuario/Correo ya existe", "danger");
         }
-    }).then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => console.log('Success:', response));
-*/
-
-/* for (var clave in data){
-    if (data.hasOwnProperty(clave)) {
-      console.log("La clave es " + clave+ " y el valor es " + data[clave]);
-    }
-  } */
-/* Object.keys(data).forEach(function (key) {
-    console.log(key+" : "+data[key]);
-});
-for (let valor of data) {
-    valor.id;
-    valor.name;
-} */
-
-
-/*
-async function validar2() {
-    console.log((await obtenerDatos().then(function (pokemon) {
-        console.log("Llega: " + pokemon);
-        if (pokemon) {
-            valor = true;
-        }else{
-            valor = false;
-        }
-    })));
+    }).catch(err => {
+        console.log(err);
+    });
 }
 
-function sleep(lf_ms) {
-    return new Promise(resolve => setTimeout(resolve, lf_ms));
-}
-
- function validar() {
-    var respuesta = false;
-    await sleep(1000);
-    console.log((await obtenerDatos().then(function (pokemon) {
-        console.log("Fin fetch: " + pokemon);
-        respuesta = pokemon;
-    })));
-    return respuesta;
-} */

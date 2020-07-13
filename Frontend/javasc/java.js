@@ -24,6 +24,7 @@ var url_clientes_ip = "http://cryptic-beach-67438.herokuapp.com/api/listar";
 var url_carrito = "https://cryptic-beach-67438.herokuapp.com/interfaz";
 var url_facturas = "https://facturacionapp9.herokuapp.com/api/";
 var url_solicitudes = "https://springtest999.herokuapp.com/api/solicituddevolucion/";
+var url_cliente_no = "https://cryptic-beach-67438.herokuapp.com/api";
 
 /* TAB_Factura
 TAB_Cliente
@@ -75,7 +76,7 @@ function cargarFacturas(e) {
 function cargarSolicitudes(e) {
     e.preventDefault();
     var id_cliente = document.getElementById("txtBuscarDevol").value;
-    if (id_cliente != "" ) {
+    if (id_cliente != "") {
         let url = url_solicitudes + "idcliente=" + id_cliente;
         fetch(url).then(function (response) {
             return response.json();
@@ -238,6 +239,7 @@ function editarCliente(usuario, correo, contraseña, telefono, saldo, estado) {
         console.log("Respuesta: " + data_res);
         cambiar_texto(false, btn_guardar);
         limpiar("entrada_cliente");
+        editando = false;
         mostrar_mensaje('Se ha modificado', alerta, 'success');
         cargarClientes();
     }).catch(function (error) {
@@ -310,16 +312,15 @@ function eliminarClientesIP() {
         //$(this).parent().parent().remove();
         let element = $(this)[0].parentElement.parentElement;
         let id_fila = element.cells[0].innerText;
-        let url = url_clientes + "/cliente?id=" + id_fila;
-        element.remove();
-        /* fetch(url, {
+        let url = url_cliente_no + "?id=" + id_fila;
+        fetch(url, {
             method: 'DELETE'
         }).then(() => {
             console.log('removed');
             element.remove();
         }).catch(err => {
             console.error(err)
-        }); */
+        });
     }
 }
 
@@ -327,6 +328,45 @@ function agregarAlCarrito(e) {
     const datos = e.target.parentElement.parentElement.getElementsByTagName('td');
     const idProducto = datos[0].innerText;
 }
+
+function agregar_Ip() {
+    var idCarritoaux;
+    var idIpaux;
+    var fecha = new Date();
+    var f = fecha.getFullYear() + "-" + (fecha.getMonth() + 1) + "-" + fecha.getDate();
+    var aux = url_carrito;
+    fetch(aux).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        var vector = [data];
+        vector.forEach(task => {
+            idCarritoaux = task.idCarrito;
+            idIpaux = task.ip;
+        });
+        //alert(f + " " + idCarritoaux + " " + idIpaux);
+        if (f != null && idCarritoaux != null && idIpaux != null) {
+            var data = { direccionIp: idIpaux, idCarrito: idCarritoaux, fecha: f };
+            let url = url_cliente_no;
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(function (data_res) {
+                console.log("Respuesta: " + data_res);
+                cargarClientesNoRegistrados();
+            }).catch(function (error) {
+                console.log('Error post: ' + error);
+            });
+        }
+    }).catch(function (error) {
+        console.log('Error Id carrito: ' + error);
+    });
+
+}
+
+
 
 $(document).on('click', '#buscar_facturas', cargarFacturas);
 
@@ -341,6 +381,8 @@ $(document).on('click', '.task-delete', eliminarClientes);
 $(document).on('click', '.task-delete-ip', eliminarClientesIP);
 
 $(document).on('click', '.agregar_a_carrito', agregarAlCarrito);
+
+$(document).on('click', '#generar_cliente', agregar_Ip);
 
 $(document).on('click', '.task-ver', (e) => {
     //const element = $(this)[0].activeElement.parentElement.parentElement;
